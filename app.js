@@ -42,7 +42,35 @@ app.get("/blogs", function(req,res){
   });
 });
 
+//NEW - DISPLAY A FORM TO MAKE A NEW ENTRY IN THE DB
+app.get("/blogs/new", function(req, res) {
+  res.render('new');
+});
 
+//CREATE - ADD A NEW ENTRY IN THE DB
+app.post('/blogs', function(req,res) {
+  //create blog
+  Blog.create(req.body.blog, function(err, newBlog) {
+    if (err) {
+      //reload the form if there is an error
+      res.render('/new');
+    } else {
+      //load up the blogs INDEX page where the new entry should be shown
+      res.redirect('/blogs');
+    };
+  });
+});
+
+//SHOW - SHOW MORE INFORMATION ABOUT ONE SPECIFIC DB ENTRY
+  app.get('/blogs/:id', function(req, res){
+    Blog.findById(req.params.id, function(err, foundBlog) {
+      if (err) {
+        res.redirect('/blogs');
+      } else {
+        res.render('show', {blog: foundBlog})
+      };
+    })
+  });
 
 //DECLARE LISTENING PORT, CONFIRM SERVER IS UP AND RUNNING IN CONSOLE
 app.listen(3000, function(){
